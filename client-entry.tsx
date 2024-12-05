@@ -17,20 +17,20 @@ const activate = (): void => {
   if (growiFacade == null || growiFacade.markdownRenderer == null) {
     return;
   }
-
   const { optionsGenerators } = growiFacade.markdownRenderer;
-
-  // For page view
+  const originalCustomViewOptions = optionsGenerators.customGenerateViewOptions;
   optionsGenerators.customGenerateViewOptions = (...args) => {
-    const options = optionsGenerators.generateViewOptions(...args);
+    const options = originalCustomViewOptions ? originalCustomViewOptions(...args) : optionsGenerators.generateViewOptions(...args);
     const { a } = options.components;
+    // replace
     options.components.a = replaceLinkName(a); // Wrap the default component
     return options;
   };
 
   // For preview
+  const originalGeneratePreviewOptions = optionsGenerators.customGeneratePreviewOptions;
   optionsGenerators.customGeneratePreviewOptions = (...args) => {
-    const preview = optionsGenerators.generatePreviewOptions(...args);
+    const preview = originalGeneratePreviewOptions ? originalGeneratePreviewOptions(...args) : optionsGenerators.generatePreviewOptions(...args);
     const { a } = preview.components;
     preview.components.a = replaceLinkName(a); // Wrap the default component
     return preview;
